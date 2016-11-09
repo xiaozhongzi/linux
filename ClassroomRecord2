@@ -1,0 +1,278 @@
+
+
+解决部分同学电脑没有eth0
+chkconfig --level 35 network on
+chkconfig --level 0123456 NetworkManager off
+
+service NetworkManager stop
+service network stop
+service network restart
+
+输入ifconfig，可以看到系统给你分配IPV4地址
+完成后，在windows CMD下输入 ping xxx.xxx.xxx.xxx 测试网络
+完成上述操作后，你会发现网络图标消失，此时
+service NetworkManag start  图标又会出现
+
+如果想开机出现图标，需要
+chkconfig --level 0123456 NetworkManager on
+但是这样会和network冲突
+
+软件包管理补充：由于大陆防火墙限制，境外镜像有时不能访问
+（1）百度  国内YUM源，会告诉你如何去更新YUM源
+（2）使用VPN
+
+服务管理：
+（1）主程序管理服务，知道路径
+（2）rpm或yum包安装，可以通过service管理，status、start、stop
+（3）开机启动服务 chkconfig，on，off。 chkconfig 服务名称 on/off。 --list查询系统运行级别，--leve指定用户级别
+
+
+
+网络管理及配置：
+ifconfig的使用：
+改变ip地址：ifconfig eth0 xxx.xxx.xxx.xxx
+配置文件位置：/etc/sysconfig/network-scripts/ifcfg-eth0
+
+系统进程监控：
+ps和top的使用
+-------------------------------------------------------------------------------------------
+关于shell脚本
+所有涉及符号的，一律用英文输入法下的符号。
+（1）重定向：
+  ● 输出重定向：>，>>（追加）
+  ● 输入重定向：<，<<（追加）
+（2）管道：|
+（3）特殊文件描述符：
+  ● 标准输入 0
+  ● 标准输出 1
+  ● 错误输出 2
+（4）控制字符-->控制命令执行方式
+  ● A;B：按顺序执行，先A后B
+  ● A && B：只有A命令执行成功，才会执行B命令
+  ● A || B：只有A命令执行失败，才会执行B命令
+  ● A &：后台运行A命令
+（5）使用花括号{}
+  ● 分割序列，使用逗号隔开，mkdir /tmp/{dir1,dir2,dir3}
+  ● 连续序列，使用“..”分割，echo {1..10..2}，最后2，代表间隔2
+
+
+
+实例：
+echo -e "the number of txt is :\n" >txtsum2016 && find -name *.txt |wc -l >>txtsum2016
+
+
+判断根目录下是否存在xuexi2017这个文件夹，如果存在，输出该文件夹信息；如果不存在，创建这个文件夹，并且在该文件夹下创建xuexi.txt文档
+
+
+ cd /xuexi2016 2>error.txt && ls -la /xuexi2016 ||mkdir /xuexi2016 && touch /xuexi2016/xuexi.txt
+
+创建一个文档，里面包含1到10000的奇数
+
+echo {1..10000..2} >jishu.txt
+创建一系列文件：
+touch ./CS{01..50}.txt
+核武器：
+rm -rf  *
+
+-------------------------------------------------------------------
+变量的使用
+------------------------------------------------
+定义、赋值、引用
+read -p  ，可以同时创建变量，  read -p "please input value:" YYYYYY
+注意$符号
+SERVERTIME=$(date)
+环境变量：
+RANDOM
+PATH
+HOME
+PWD
+
+echo $RANDOM 
+UUU=$RANDOM
+
+
+数组
+定义、赋值、引用
+#的使用，返回数组元素个数
+@或者*的使用，返回所有的值。
+注意{}的使用
+
+A[7]=1111
+echo ${A[7]}
+A[5]=$RANDOM
+
+算术运算：浮点型数不适用
+注意有两个圆括号！
+A[7]=$((5**2))
+
+XX=100
+A[9]=$((XX--))
+A[10]=$((XX++))
+
+XINSHUI=10000
+echo $XINSHUI
+echo $((XINSHUI*2))
+
+WORK4=$(($WORK--))，WORK先赋值给WORK4，然后自减1
+
+---------------------------------------
+测试选项 （很实用）
+test -x XXX 或者[ 表达式 ]，表达式与中括号之间有个空格
+
+[root@zp ~]# test -s hehe.txt && echo "hehe非空" || echo "hehe是空"
+hehe是空
+[root@zp ~]# [ -s hehe.txt ] && echo "hehe非空" || echo "hehe是空"
+hehe是空
+
+[root@zp ~]# [ -e xixi.txt ] && echo "xixi.txt exists" || echo "xixi.txt does not exists" && echo "xixi" > xixi.txt
+
+[root@zp ~]# [ -e xixi.txt ] && echo "xixi.txt exists" || echo "xixi.txt does not exists" && echo  "haha" > xixi.txt
+
+说明：无论[ -e xixi.txt ] 什么情况都会执行 echo  "haha" >xixi.txt
+
+[root@zp ~]# [ -d /OO ] && echo "cunzai" || mkdir /OO
+
+[root@zp /]# SCORE=70
+[root@zp /]# [ $SCORE -ge 60 ] && echo "pass" || echo "no pass"
+
+-d FILE file文件是否存在且为目录
+-e FILE file文件是否存在
+-r FILE file文件是否存在且可读
+-x FILE file文件是否存在且可执行
+-w FILE file文件是否存在且可写
+-s FILE file文件是否存在且非空
+
+-n STRING 字符串长度非0
+-z STRING 字符串长度为0
+STRING1=STRING2 字符串是否相等
+STRING1！=STRING2 字符串不相等
+
+INTER1 -eq INTER2
+INTER1 -gt INTER2
+INTER1 -lt INTER2
+INTER1 -ge INTER2
+INTER1 -le INTER2
+INTER1 -ne INTER2
+
+是否存在指定文件。
+find -name lujing >pdfile && test -s pdfile && echo "pc exists lujing" ||echo "pc does not exists pdfile"
+
+find -name lujing |wc -l >pdfile && test -s pdfile && cat pdfile ||echo "pc does not exists pdfile"
+
+
+判断/etc/下是否存在aa.conf，如果存在将aa.conf权限改为拥有者可读可写可执行，组成员可读可执行不可写，其他成员只能可执行。
+
+test -e /etc/aa.conf && chmod 751 /etc/aa.conf
+
+AA=120
+BB=110
+
+[ $AA -eq $BB ] && echo "wrong" || echo "right"
+
+---------------------------------------------
+使用find -name  *.txt   相关问题：
+
+[root@zp /]# find -name *.txt
+find: paths must precede expression: CS1.txt
+Usage: find [-H] [-L] [-P] [-Olevel] [-D help|tree|search|stat|rates|opt|exec] [path...] [expression]
+
+解决方案：
+进行查找资料，多文件的查找的时候需要增加单引号
+ find /root/ -name  '*.txt'
+
+-----------------------------
+使用rz，sz传输文件
+yum -y install lrzsz
+其中：
+rz 是客户端传输文件给服务器
+sz是服务器发送文件给客户端
+也可以使用：文件-->传输-->ZMODEM发送文件、ZMODEM接收文件
+
+小文件可以用这个，大文件一般还是用FTP、NFS
+-------------------------------------
+SHELL脚本编程
+执行脚本方式：
+（1）bash xxx.sh
+（2）chmod 777 xxx.sh  , ./xxx.sh
+（3）.xxx.sh 或者 source xxx.sh
+
+位置变量P112
+变量中的展开替换 P112
+
+结合example1.sh以及example2.sh学习
+
+-------------------------------------------------------
+xshell连不上centos原因：
+（1）sshd服务有没有开启，service sshd status, service sshd start （ubuntu下系统没有自带ssh，需要安装 apt-get install ssh）
+（2）如果Windows ping 不通 Centos，那么打开Windows网络管理，更改适配器中，VMware Network Adapter VMnet8，将其设置为centos同一个网段。掩码配置下，剩下的网关和DNS不用设置
+（3）centos没有连接网络eth0 <=====ifconfig 发现没有IPV4地址
+（4）VMware DHCP Service相关服务（手动改为自动），（计算机-->右键管理）
+（5）CentOS防火墙没有关闭，selinux没有关闭
+setenforce 0  ；临时关闭SELINUX
+service iptables stop ；临时关闭防火墙
+（6）关闭windows防火墙
+（7）下发的xshell软件版本不适合本机系统，下载一个最新的xshell
+（8）放弃使用xshell，使用Putty
+----------------------------------------
+
+
+
+------------------------------------------------------
+
+SHELL中的引号
+（1）反斜线
+\显示本身含义，比如*
+echo  *
+echo  \*
+echo $HOME
+echo \$HOME
+（2） 单引号——可以将其中间任何字符还原为字面意义，屏蔽shell元字符功能
+echo '$HOME'
+echo $HOME
+
+echo  'test\'
+echo test\
+（3）双引号——功能类似单引号，但是有三种符号不能屏蔽：`, \,$
+
+echo "$HOME"
+（4）反引号——进行命令替换，用命令执行结果替换命令字符
+
+[root@zp /]# echo "current path is `pwd`"
+current path is /
+
+[root@zp /]# echo "date is `date` "
+
+echo  "date is $(date)"
+echo  'date is $(date)'
+
+变量展开和替换：
+
+IPADDR=$(ifconfig |grep inet | head -1)
+echo $(IPADDR)
+echo ${IPADDR%Bcast*} 
+
+
+
+
+------------------------------------------------------
+正则表达式的学习
+
+计算机作业*.doc
+
+
+
+-----------------------------
+[root@zp Scripts]# ./for01.sh 10000 >haha
+                                ./for02.sh |wc -l
+
+除了在脚本代码里可以使用重定向功能、管道；还可以在脚本外使用，比如上面的例子。
+
+
+个人邮箱：794033457@qq.com
+
+
+
+
+
+
+
