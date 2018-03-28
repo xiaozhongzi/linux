@@ -1,0 +1,41 @@
+﻿在指定文件夹下查找指定的文件
+find ./test -name "*.txt"
+忽略大小写
+find ./test -iname "*.Php"
+
+指定目录查找的深度
+find ./test -maxdepth 2 -name "*.txt"
+排除某些文件
+find ./test -not -name "*.txt"
+find ./test ! -name "*.txt"
+
+同时使用多个查找条件
+find ./test -name "abc*" ! -name "*.php"
+
+只查找文件
+find ./test -type f -name "abc*"./test/abc.txt
+只查找目录
+find ./test -type d -name "abc*"./test/abc
+
+在多个目录下查找指定文件：
+find ./test ./hehe  -name "*.txt"
+
+查找隐匿文件
+find ./test  -type f -name ".*"
+
+查找特定用户的文件
+find / -user zp -type f -name "*.txt"
+
+查找过去5天内被访问的文件
+find / -type f -atime -5
+
+查找过去1小时内被修改过的文件
+
+
+
+man.linuxde.net/find
+
+
+
+
+
